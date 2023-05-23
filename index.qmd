@@ -1,11 +1,15 @@
 ---
-title: "tyler-widdison.github.io"
+title: "Tyler Widdison: Professional Portfolio"
 ---
 
-This is a Quarto website.
+Welcome to my professional portfolio! I'm Tyler Widdison, and I'm passionate about data, volleyball analytics, and using finding solutions to data issues. Here, you'll find examples of my work, vollyeball data tutorials, and insights on a variety of topics.
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+## **Experience**
 
-```{r}
-1 + 1
-```
+::: border
+**Data Analyst** (2022-present) FamilySearch
+:::
+
+::: border
+**Data Performance Analyst** (2019-2023) USA Beach Volleyball Teams
+:::
