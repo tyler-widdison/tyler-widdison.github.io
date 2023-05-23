@@ -1,3 +1,11 @@
 ---
 title: "Blog"
 ---
+
+## Projects
+
+OlympicsDataverse - <https://github.com/OlympicsDataverse>
+
+Volleyball data lab video series - <https://youtube.com/playlist?list=PLLmNd2dxyPdGQu_rudRJmbjBW4CBCyAL8>
+
+datavolleyXtras - <https://github.com/tyler-widdison/datavolleyXtra>

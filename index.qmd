@@ -1,15 +1,36 @@
 ---
-title: "Tyler Widdison: Professional Portfolio"
+title: "Tyler Widdison"
+format: html
+about:
+  image: headshot.jpeg
+  template: solana
 ---
 
-Welcome to my professional portfolio! I'm Tyler Widdison, and I'm passionate about data, volleyball analytics, and using finding solutions to data issues. Here, you'll find examples of my work, vollyeball data tutorials, and insights on a variety of topics.
+------------------------------------------------------------------------
 
-## **Experience**
+### Bio
 
-::: border
-**Data Analyst** (2022-present) FamilySearch
-:::
+Welcome to my professional portfolio! I'm Tyler Widdison, a dedicated data analyst driven by a passion for learning about data workflows and tackling intricate data challenges. My current focus lies in data analysis, visualization, and empowering data workflows. I currently work as a data analyst at FamilySearch, where I contribute to the Contract and Compliance team.
 
-::: border
-**Data Performance Analyst** (2019-2023) USA Beach Volleyball Teams
-:::
+My contribution has been in data gathering and cleaning, implementing ETL processes, and leveraging my programming skills to develop a custom tkinter application. This application utilizes Selenium and enables robust testing in Salesforce, streamlining and enhancing our overall efficiency. Additionally, I have coordinated the created of an automated Shiny application which tracked the progress of document generation.
+
+------------------------------------------------------------------------
+
+<div>
+
+## Experience
+
+| **Data Analyst** (2022-present)
+| FamilySearch
+| 
+| **Performance Data Analyst** (2019-2023)
+| USA Beach Volleyball Teams
+| 
+| **Operations Data Analyst** (2016-2019)
+| Hudl
+
+</div>
+
+------------------------------------------------------------------------
+
+## 

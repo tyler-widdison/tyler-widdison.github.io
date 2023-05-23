@@ -7,15 +7,18 @@ website:
   navbar:
     left:
       - href: index.qmd
-        text: Home
+        text: About
       - about.qmd
       - blog.qmd
+    right:
+      - icon: github
+        href: https://github.com/tyler-widdison
+      - icon: envelope
+        href: "mailto:mail.tylerperrywiddison@gmail.com"
 
 format:
   html:
-    theme: cosmo
+    theme: materia
     css: styles.css
-    toc: true
 
 editor: visual
-

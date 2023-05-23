@@ -1,23 +1,23 @@
 [
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
+    "objectID": "blog.html",
+    "href": "blog.html",
+    "title": "Blog",
     "section": "",
-    "text": "About this site\n\n1 + 1\n\n[1] 2"
+    "text": "OlympicsDataverse - https://github.com/OlympicsDataverse\nVolleyball data lab video series - https://youtube.com/playlist?list=PLLmNd2dxyPdGQu_rudRJmbjBW4CBCyAL8\ndatavolleyXtras - https://github.com/tyler-widdison/datavolleyXtra"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Tyler Widdison: Professional Portfolio",
+    "objectID": "blog.html#projects",
+    "href": "blog.html#projects",
+    "title": "Blog",
     "section": "",
-    "text": "Welcome to my professional portfolio! I’m Tyler Widdison, and I’m passionate about data, volleyball analytics, and using finding solutions to data issues. Here, you’ll find examples of my work, vollyeball data tutorials, and insights on a variety of topics."
+    "text": "OlympicsDataverse - https://github.com/OlympicsDataverse\nVolleyball data lab video series - https://youtube.com/playlist?list=PLLmNd2dxyPdGQu_rudRJmbjBW4CBCyAL8\ndatavolleyXtras - https://github.com/tyler-widdison/datavolleyXtra"
   },
   {
     "objectID": "index.html#experience",
     "href": "index.html#experience",
-    "title": "Tyler Widdison: Professional Portfolio",
+    "title": "Tyler Widdison",
     "section": "Experience",
-    "text": "Experience\nData Analyst (2022-present)\nFamilySearch\nData Performance Analyst (2019-2023)\nUSA Beach Volleyball Teams"
+    "text": "Experience\nData Analyst (2022-present)\nFamilySearch\n\nPerformance Data Analyst (2019-2023)\nUSA Beach Volleyball Teams\n\nOperations Data Analyst (2016-2019)\nHudl"
   }
 ]
