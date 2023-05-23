@@ -2,7 +2,7 @@
 title: "Blog"
 ---
 
-## Projects
+## Posts
 
 OlympicsDataverse - <https://github.com/OlympicsDataverse>
 
