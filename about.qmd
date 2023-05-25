@@ -2,6 +2,11 @@
 title: "Resources"
 ---
 
-## Resources
-
 ------------------------------------------------------------------------
+
+::: {#Links}
+### Links
+
+| <https://www.sportsdataverse.org/>
+| <https://github.com/openvolley>
+:::

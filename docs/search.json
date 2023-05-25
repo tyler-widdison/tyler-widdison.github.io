@@ -1,17 +1,17 @@
 [
   {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "Resources",
+    "section": "",
+    "text": "Links\nhttps://www.sportsdataverse.org/\nhttps://github.com/openvolley"
+  },
+  {
     "objectID": "blog.html",
     "href": "blog.html",
     "title": "Blog",
     "section": "",
-    "text": "OlympicsDataverse - https://github.com/OlympicsDataverse\nVolleyball data lab video series - https://youtube.com/playlist?list=PLLmNd2dxyPdGQu_rudRJmbjBW4CBCyAL8\ndatavolleyXtras - https://github.com/tyler-widdison/datavolleyXtra"
-  },
-  {
-    "objectID": "blog.html#posts",
-    "href": "blog.html#posts",
-    "title": "Blog",
-    "section": "",
-    "text": "OlympicsDataverse - https://github.com/OlympicsDataverse\nVolleyball data lab video series - https://youtube.com/playlist?list=PLLmNd2dxyPdGQu_rudRJmbjBW4CBCyAL8\ndatavolleyXtras - https://github.com/tyler-widdison/datavolleyXtra"
+    "text": "OlympicsDataverse\n\n\n\n\n\n\n\nOlympics\n\n\nData gathering\n\n\n\n\nA place for all things data via Olympic Sports\n\n\n\n\n\n\nMay 24, 2023\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "index.html#experience",
@@ -19,5 +19,12 @@
     "title": "Tyler Widdison",
     "section": "Experience",
     "text": "Experience\nData Analyst (2022-present)\nFamilySearch\n\nPerformance Data Analyst (2019-2023)\nUSA Beach Volleyball Teams\n\nOperations Data Analyst (2016-2019)\nHudl"
+  },
+  {
+    "objectID": "posts/olympics_data_verse.html",
+    "href": "posts/olympics_data_verse.html",
+    "title": "OlympicsDataverse",
+    "section": "",
+    "text": "Inspiration coming from the https://github.com/sportsdataverse, I found there was no common place with Olympic data. After discovering some sports have public access to data I decided to start this organization with the intent of a data distribution knowledge base.\n\nSummer games\n\n\n\n\n\n\nSport\nSport (initial)\nBody\nSporting Body Webpage\nPackages or API\n\n\n\n\nArtistic Swimming\nSWA\nWAqua\nhttps://www.worldaquatics.com\nhttps://api.worldaquatics.com/fina/competitions/3085/events\n\n\nDiving\nDIV\nWAqua\nhttps://www.worldaquatics.com\nhttps://api.worldaquatics.com/fina/competitions/3085/events\n\n\nMarathon Swimming\nOWS\nWAqua\nhttps://www.worldaquatics.com\nhttps://api.worldaquatics.com/fina/competitions/3085/events\n\n\nSwimming\nSWM\nWAqua\nhttps://www.worldaquatics.com\nhttps://api.worldaquatics.com/fina/competitions/3085/events\n\n\nWater Polo\nWPO\nWAqua\nhttps://www.worldaquatics.com\nhttps://api.worldaquatics.com/fina/competitions/3085/events\n\n\n3x3 Basketball\nBK3\nFIBA\nhttps://www.fiba.basketball\nhttps://cm.fibaorganizer.com/static/docs/api/\n\n\nBasketball\nBKB\nFIBA\nhttps://www.fiba.basketball\nhttps://cm.fibaorganizer.com/static/docs/api/\n\n\nCanoe Sprint\nCSP\nICF\nhttps://www.canoeicf.com\nhttps://infoicf.msl.es/webICF/searcherOneSport?page=ZZS100R_@@@@@@@@@@@@@@@@@@@@@ENG\n\n\nCanoe Slalom\nCSL\nICF\nhttps://www.canoeicf.com\nhttps://infoicf.msl.es/webICF/searcherOneSport?page=ZZS100R_@@@@@@@@@@@@@@@@@@@@@ENG\n\n\nCycling BMX Freestyle\nBMF\nUCI\nhttps://www.uci.org\nhttps://www.uci.org/api/calendar/upcoming\n\n\nCycling BMX Racing\nBMX\nUCI\nhttps://www.uci.org\nhttps://www.uci.org/api/calendar/upcoming\n\n\nCycling Mountain Bike\nMTB\nUCI\nhttps://www.uci.org\nhttps://www.uci.org/api/calendar/upcoming\n\n\nCycling Road\nCRD\nUCI\nhttps://www.uci.org\nhttps://www.uci.org/api/calendar/upcoming\n\n\nCycling Track\nCTR\nUCI\nhttps://www.uci.org\nhttps://www.uci.org/api/calendar/upcoming\n\n\nArtistic Gymnastics\nGAR\nFIG\nhttps://www.gymnastics.sport\nhttps://www.gymnastics.sport/api/\n\n\nRhythmic Gymnastics\nGRY\nFIG\nhttps://www.gymnastics.sport\nhttps://www.gymnastics.sport/api/\n\n\nTrampoline Gymnastics\nGTR\nFIG\nhttps://www.gymnastics.sport\nhttps://www.gymnastics.sport/api/\n\n\nVolleyball - Beach\nVBV\nFIVB\nhttps://www.fivb.com\nhttps://www.fivb.org/VisSDK/VisWebService/#Introduction.html\n\n\nVolleyball - Indoor\nVVO\nFIVB\nhttps://www.fivb.com\nhttps://www.fivb.org/VisSDK/VisWebService/#Introduction.html\n\n\nEquestrian - Dressage\nEDR\nFEI\nhttps://www.fei.org\nhttps://inside.fei.org/fei/your-role/it-services/it-platforms/fei-database\n\n\nEquestrian - Eventing\nEVE\nFEI\nhttps://www.fei.org\nhttps://inside.fei.org/fei/your-role/it-services/it-platforms/fei-database\n\n\nEquestrian - Jumping\nEJP\nFEI\nhttps://www.fei.org\nhttps://inside.fei.org/fei/your-role/it-services/it-platforms/fei-database\n\n\nWrestling - Freestyle\nWRE\nUWW\nhttps://uww.org\nhttps://github.com/unitedworldwrestling\n\n\nWrestling - Greco-Roman\nWGR\nUWW\nhttps://uww.org\nhttps://github.com/unitedworldwrestling\n\n\nArchery\nARC\nWArch\nhttps://www.worldarchery.sport\nhttps://www.worldarchery.sport/api\n\n\nAthletics\nATH\nWAthle\nhttps://worldathletics.org\nNone found\n\n\nBadminton\nBDM\nBWF\nhttp://bwfbadminton.com\nhttps://extranet-lv.bwfbadminton.com/api\n\n\nBoxing\nBOX\nAIBA\nhttps://www.iba.sport\nNone found\n\n\nBreaking\nBKG\nWDSF\nhttps://www.worlddancesport.org\nhttps://services.worlddancesport.org/api/1\n\n\nFencing\nFEN\nFIE\nhttp://fie.org\nNone found\n\n\nField hockey\nHOC\nFIH\nhttps://www.fih.hockey\nNone found\n\n\nFootball\nFBL\nFIFA\nhttps://www.fifa.com\nhttps://futdb.app\n\n\nGolf\nGLF\nIGF\nhttps://www.igfgolf.org\nNone found\n\n\nHandball\nHBL\nIHF\nhttp://www.ihf.info\nNone found\n\n\nJudo\nJUD\nIJF\nhttps://www.ijf.org\nhttps://judobase.ijf.org/\n\n\nModern Pentathlon\nMPN\nUIPM\nhttps://www.uipmworld.org\nNone found\n\n\nRowing\nROW\nWRow\nhttps://worldrowing.com\nNone found\n\n\nRugby Sevens\nRU7\nWRug\nhttps://www.world.rugby\nhttps://github.com/pierre-lamarche/RugbyRanking\n\n\nSailing\nSAL\nWSail\nhttps://www.sailing.org/\nNone found\n\n\nShooting\nSHO\nISSF\nhttp://www.issf-sports.org/\nNone found\n\n\nSkateboarding\nSKB\nWSkate\nhttp://www.worldskate.org/\nNone found\n\n\nSport Climbing\nCLB\nIFSC\nhttp://www.ifsc-climbing.org/\nNone found\n\n\nSurfing\nSRF\nISA\nhttps://www.isasurf.org/\nNone found\n\n\nTable Tennis\nTTE\nITTF\nhttps://www.ittf.com/\nNone found\n\n\nTaekwondo\nTKW\nWT\nhttp://www.worldtaekwondo.org/\nNone found\n\n\nTennis\nTEN\nITF\nhttps://www.itftennis.com/en/\nNone found\n\n\nTriathlon\nTRI\nITU\nhttps://www.triathlon.org/\nhttps://github.com/tyler-widdison/rTriathlon\n\n\nTrampoline\nGTR\nFIG\nhttps://www.gymnastics.sport/site/\nNone found\n\n\nWeightlifting\nWLF\nIWF\nhttps://iwf.sport/\nNone found\n\n\n\n\n\n\n\n\n\nWinter games"
   }
 ]
