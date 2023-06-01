@@ -40,4 +40,4 @@ kableExtra::kbl(summer) %>%
 
 ### Winter games
 
-![](rings.png){fig-align="center" width="107"}
+![](rings.png){fig-align="center" width="84"}
