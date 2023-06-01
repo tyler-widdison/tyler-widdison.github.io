@@ -5,5 +5,5 @@ title: "Resume"
 ------------------------------------------------------------------------
 
 ```{=html}
-<iframe width="900" height="700" src="posts/Widdison-resume.pdf" title="Quarto Documentation"></iframe>
+<iframe width="800" height="600" src="docs/Widdison-resume.pdf" title="Quarto Documentation"></iframe>
 ```
