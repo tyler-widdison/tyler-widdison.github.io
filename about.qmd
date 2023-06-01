@@ -5,8 +5,21 @@ title: "Resources"
 ------------------------------------------------------------------------
 
 ::: {#Links}
-### Links
+### Openvolley
 
-| <https://www.sportsdataverse.org/>
-| <https://github.com/openvolley>
+Useful R package when evaluating volleyball data.
+
+[Openvolley](https://github.com/openvolley)
 :::
+
+------------------------------------------------------------------------
+
+### Volleyball data lab
+
+<div>
+
+Video series introducing the use of R with .dvw (volleyall scouted) files.
+
+[Volleyball data lab](https://www.youtube.com/playlist?list=PLLmNd2dxyPdGQu_rudRJmbjBW4CBCyAL8)
+
+</div>

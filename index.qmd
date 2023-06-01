@@ -10,9 +10,7 @@ about:
 
 ### Bio
 
-Welcome to my professional portfolio! I'm Tyler Widdison, a dedicated data analyst driven by a passion for learning about data workflows and tackling tangled data challenges. My current focus lies in data analysis, visualization, and empowering data workflows. I currently work as a data analyst at FamilySearch, where I contribute to the Contract and Compliance team.
-
-My contribution has been in data gathering and cleaning, implementing ETL processes, and leveraging my programming skills to develop a custom dashboards and applications. Using Selenium and enabling robust testing in Salesforce, streamlining and enhancing our overall efficiency and automatically tracking the progress of document building form our database.
+Welcome to my professional portfolio! I'm Tyler Widdison, a dedicated data analyst driven by a passion for finding solutions to complex problems. My current focus lies in data analysis, visualization, and empowering data workflows. I currently work as a data analyst at FamilySearch, where I contribute to the Contract and Compliance team. I previously worked with USA Beach Volleyball teams during the Tokyo 2021 Olympics where I supported the gold medal winning team.
 
 ------------------------------------------------------------------------
 
@@ -26,8 +24,8 @@ My contribution has been in data gathering and cleaning, implementing ETL proces
 | **Performance Data Analyst** (2019-2023)
 | USA Beach Volleyball Teams
 | 
-| **Operations Data Analyst** (2016-2019)
-| Hudl
+| **Operations Data Analyst** (2013-2019)
+| Hudl/Volleymetrics
 
 </div>
 

@@ -4,7 +4,7 @@
     "href": "about.html",
     "title": "Resources",
     "section": "",
-    "text": "Links\nhttps://www.sportsdataverse.org/\nhttps://github.com/openvolley"
+    "text": "Openvolley\nUseful R package when evaluating volleyball data.\nOpenvolley\n\n\n\n\nVolleyball data lab\n\nVideo series introducing the use of R with .dvw (volleyall scouted) files.\nVolleyball data lab"
   },
   {
     "objectID": "blog.html",
@@ -18,7 +18,7 @@
     "href": "index.html#experience",
     "title": "Tyler Widdison",
     "section": "Experience",
-    "text": "Experience\nData Analyst (2022-present)\nFamilySearch\n\nPerformance Data Analyst (2019-2023)\nUSA Beach Volleyball Teams\n\nOperations Data Analyst (2016-2019)\nHudl"
+    "text": "Experience\nData Analyst (2022-present)\nFamilySearch\n\nPerformance Data Analyst (2019-2023)\nUSA Beach Volleyball Teams\n\nOperations Data Analyst (2013-2019)\nHudl/Volleymetrics"
   },
   {
     "objectID": "posts/olympics_data_verse.html",
