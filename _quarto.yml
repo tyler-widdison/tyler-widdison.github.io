@@ -10,7 +10,6 @@ website:
         text: About
       - about.qmd
       - blog.qmd
-      - resume.qmd
     right:
       - icon: github
         href: https://github.com/tyler-widdison

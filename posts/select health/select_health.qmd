@@ -1,0 +1,196 @@
+---
+title: "Select Health providers"
+date: '2023-06-22'
+categories: ['Maps', 'Data gathering', 'Informational']
+image: "select_health_picture.png"
+description: 'Data gathering, wrangling, visualizing with health providers'
+execute: 
+  message: false
+  warning: false
+editor_options:
+  chunk_output_type: console
+runtime: shiny
+---
+
+[**SelectHealth**](https://selecthealth.org/) offers medical and dental insurance plans in Utah, Idaho, and Nevada. This post's goal is to build a interactive tool which can identify providers in a map using their machine readable data!
+
+Data is gathered from <https://selecthealth.org/machine-readable-data>. Only gathering the 'Providers' data for this post. <https://ebu.intermountainhealthcare.org/shprovider/exchange.providers.json>.
+
+```{r, warning=FALSE, message=FALSE}
+library(dplyr)
+library(tidyr)
+library(readr)
+library(jsonlite)
+library(DT)
+library(shiny)
+library(shinyWidgets)
+library(purrr)
+library(leaflet)
+
+# Load data
+providers <- jsonlite::fromJSON("https://ebu.intermountainhealthcare.org/shprovider/exchange.providers.json")
+
+# Wrangle data
+data <- providers %>% 
+    dplyr::mutate(addresses = purrr::map(addresses, as.data.frame),
+                  facility_type = purrr::map_chr(facility_type, ~ ifelse(length(.x) > 0, purrr::pluck(.x, 1), NA)),
+                  plans = purrr::map(plans, as.data.frame),
+                  first_name = name$first,
+                  last_name = name$last
+    ) %>% 
+    tidyr::unnest(addresses, keep_empty = T) %>% 
+    tidyr::unnest(languages, keep_empty = T) %>% 
+    tidyr::unnest(specialty, keep_empty = T) %>% 
+    tidyr::unnest(plans, keep_empty = T) %>% 
+    tidyr::unnest(years, keep_empty = T) %>% 
+    dplyr::mutate(addresses = stringr::str_replace_all(address, "&", ","),
+                  addy = paste0(addresses, ", ", city, ", ", state)
+    )
+```
+
+After reading the data the next step is to gather the longitude and latitude for map usage. I use the [ggmap](https://github.com/dkahle/ggmap) package. (geocoded_data was ran previously and takes a while to run)
+
+*\*\*NOTE:\*\** ggmap requires some work in Google and registering your api. I will not go over that portion of this process. I originally attempted to use [tidygeocoder](https://jessecambon.github.io/tidygeocoder/), but found there is a [HIPAA](https://github.com/jessecambon/tidygeocoder/issues/137) situation which prevented me from getting the correct longitude and latitude for specific facilities. I found using ggmap did not give me this error.
+
+```{r, warning=FALSE, message=FALSE}
+
+# Get geocoordinates
+#addys <- data %>% 
+#  dplyr::distinct(addy)
+
+# Obtain coordinates using ggmap
+#geocoded_data <- addys %>%
+#  ggmap::mutate_geocode(addy)
+#readr::write_csv(geocoded_data, "geocoded_data.csv")
+geocoded_data <- readr::read_csv(here::here("posts/select health/geocoded_data.csv"))
+```
+
+Then some additional data wrangling after obtaining all geocodes.
+
+```{r, warning=FALSE, message=FALSE}
+# Join the coord with the providers data and wrangle furthur
+df <- data %>% 
+  dplyr::left_join(geocoded_data) %>% 
+  dplyr::filter(!grepl("^\\(", addy)) %>% 
+  dplyr::distinct(facility_name, facility_type, type, addy, lon, lat, group_name, languages, gender, first_name, last_name, specialty, network_tier)
+```
+
+Ready for some mapping!
+
+```{r, warning=FALSE, message=FALSE}
+# Create individual datasets for each type for the map
+group_data <- df %>% 
+  dplyr::filter(type == 'GROUP') %>% 
+  janitor::remove_empty('cols') %>% 
+  dplyr::mutate(notes = paste0(group_name)) %>% 
+  dplyr::distinct(type, addy, lon, lat, group_name, notes)
+
+indiv_data <- df %>% 
+  dplyr::filter(type == 'INDIVIDUAL') %>% 
+  janitor::remove_empty('cols') %>% 
+  dplyr::mutate(name = paste0(first_name, ' ', last_name),
+                notes = paste0(gender, " - ", name, " - ", languages, " - ", specialty)) %>% 
+  dplyr::distinct(type, addy, lon, lat, languages, gender, name, specialty, notes)
+
+facility_data <- df %>% 
+  dplyr::filter(type == 'FACILITY') %>% 
+  janitor::remove_empty('cols') %>% 
+  dplyr::mutate(notes = paste0(facility_name)) %>% 
+  dplyr::distinct(facility_name, facility_type, type, addy, lon, lat, notes)
+```
+
+### All types
+
+Now lets do some mapping with all types!
+
+```{r}
+
+# map!
+leaflet() %>%
+  leaflet::setView(lng = -111.349309, lat = 41.648323, zoom = 4) %>% 
+  leaflet::addTiles() %>% 
+  leaflet::addCircleMarkers(popup = group_data$notes, clusterOptions = leaflet::markerClusterOptions(), lng = group_data$lon, lat = group_data$lat, group = "Group", color = "red") %>%
+  leaflet::addCircleMarkers(popup = facility_data$notes, clusterOptions = leaflet::markerClusterOptions(), lng = facility_data$lon, lat = facility_data$lat, group = "Facility", color = "#F1CC6E") %>%
+  leaflet::addCircleMarkers(popup = indiv_data$notes, clusterOptions = leaflet::markerClusterOptions(), lng = indiv_data$lon, lat = indiv_data$lat, group = "Individual", color = "#66B0B1") %>%
+  leaflet::addLegend(values = 'Group', group = "Group", position = "bottomleft", labels = "Group", colors = "red") %>%
+  leaflet::addLegend(values = 'Facility', group = "Facility", position = "bottomleft", labels = "Facility", colors = "#F1CC6E") %>%
+  leaflet::addLegend(values = 'Individual', group = "Individual", position = "bottomleft", labels = "Individual", colors = "#66B0B1") %>%
+  leaflet::addLayersControl(overlayGroups = c("Group", "Facility", 'Individual'),
+                   options = leaflet::layersControlOptions(collapsed = FALSE)) 
+```
+
+This is a relatively simple example of how to gather and visualize public data.
+
+------------------------------------------------------------------------
+
+### Individual providers map exploration
+
+Adding a bit of shiny and restrictiveness to the map can quickly return specific providers. Let's add a table as well for additional context.
+
+```{r, echo=FALSE}
+# Inputs for individual providers:
+shiny::selectInput('gender_input',
+            label = 'Gender',
+            choices = c('Female', 'Male'),
+            selected = 'Female')
+
+language_subset <- shiny::reactive({
+  indiv_data %>% 
+  dplyr::filter(gender == input$gender_input)
+  })
+
+ shiny::renderUI({
+    shinyWidgets::pickerInput('language_input', 'Languages', multiple = T, options = list(`actions-box` = TRUE),
+                       choices = (language_subset()$languages) %>% unique(), 
+                       selected = ((language_subset()$languages) %>% unique())[1]
+                )
+   })
+ 
+specialty_subset <- shiny::reactive({
+  indiv_data %>% dplyr::filter(gender == input$gender_input & languages %in% input$language_input)
+  })
+ 
+ shiny::renderUI({
+    shinyWidgets::pickerInput('specialty_input', 'Specialty', multiple = T, options = list(`actions-box` = TRUE),
+                              choices = (specialty_subset()$specialty) %>% unique(), 
+                              selected = ((specialty_subset()$specialty) %>% unique())[1]
+                )
+   })
+
+renderLeaflet({
+  data <- indiv_data %>% 
+    dplyr::filter(gender == input$gender_input & languages %in% input$language_input & specialty %in% input$specialty_input)
+
+  leaflet::leaflet() %>%
+    leaflet::setView(lng = -111.349309, lat = 41.648323, zoom = 4) %>% 
+    leaflet::addTiles() %>% 
+    leaflet::addCircleMarkers(popup = data$notes, clusterOptions = leaflet::markerClusterOptions(), lng = data$lon, lat = data$lat, group = "Individual", color = "red")
+  })
+
+DT::renderDT({
+  data <- indiv_data %>% 
+    dplyr::filter(gender == input$gender_input & languages %in% input$language_input & specialty %in% input$specialty_input) %>% 
+    dplyr::distinct(name, addy, gender, languages, specialty)
+  
+  DT::datatable(
+    data,
+    rownames = FALSE,
+    extensions = 'Buttons',
+    class = 'display nowrap compact cell-border',
+    filter = 'top',
+    options = list(
+      scrollX = TRUE,
+      scrollY = "300px",
+      dom = 'tB',
+      buttons = c('copy', 'csv'),
+      paging = FALSE,
+      fixedHeader = TRUE))
+  })
+    
+```
+
+### Additional data
+
+This is a great resource for additional provider data outside of the select health network:
+
+<https://github.com/bayesimpact/encompass/blob/a4f47e384ef4fe4dc43c30423a1713c2c93dc87f/data/healthcare_gov/Machine_Readable_URL_PUF.csv#L272>
