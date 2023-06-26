@@ -9,12 +9,18 @@ execute:
   warning: false
 editor_options:
   chunk_output_type: console
-runtime: shiny
+format:
+  html:
+    page-layout: full
+    code-fold: true
+    code-summary: "Show the code"
 ---
 
 [**SelectHealth**](https://selecthealth.org/) offers medical and dental insurance plans in Utah, Idaho, and Nevada. This post's goal is to build a interactive tool which can identify providers in a map using their machine readable data!
 
 Data is gathered from <https://selecthealth.org/machine-readable-data>. Only gathering the 'Providers' data for this post. <https://ebu.intermountainhealthcare.org/shprovider/exchange.providers.json>.
+
+------------------------------------------------------------------------
 
 ```{r, warning=FALSE, message=FALSE}
 library(dplyr)
@@ -28,10 +34,12 @@ library(purrr)
 library(leaflet)
 
 # Load data
-providers <- jsonlite::fromJSON("https://ebu.intermountainhealthcare.org/shprovider/exchange.providers.json")
+#provider <- jsonlite::fromJSON("https://ebu.intermountainhealthcare.org/shprovider/exchange.providers.json")
+
+load(here::here(file = 'posts/select health/provider.rda'))
 
 # Wrangle data
-data <- providers %>% 
+data <- provider %>% 
     dplyr::mutate(addresses = purrr::map(addresses, as.data.frame),
                   facility_type = purrr::map_chr(facility_type, ~ ifelse(length(.x) > 0, purrr::pluck(.x, 1), NA)),
                   plans = purrr::map(plans, as.data.frame),
@@ -48,9 +56,13 @@ data <- providers %>%
     )
 ```
 
+------------------------------------------------------------------------
+
 After reading the data the next step is to gather the longitude and latitude for map usage. I use the [ggmap](https://github.com/dkahle/ggmap) package. (geocoded_data was ran previously and takes a while to run)
 
-*\*\*NOTE:\*\** ggmap requires some work in Google and registering your api. I will not go over that portion of this process. I originally attempted to use [tidygeocoder](https://jessecambon.github.io/tidygeocoder/), but found there is a [HIPAA](https://github.com/jessecambon/tidygeocoder/issues/137) situation which prevented me from getting the correct longitude and latitude for specific facilities. I found using ggmap did not give me this error.
+***\*\*NOTE:\*\**** ggmap requires some work in Google and registering your api. I will not go over that portion of this process. I originally attempted to use [tidygeocoder](https://jessecambon.github.io/tidygeocoder/), but found there is a [HIPAA](https://github.com/jessecambon/tidygeocoder/issues/137) situation which prevented me from getting the correct longitude and latitude for specific facilities. I found using ggmap did not give me this error.
+
+------------------------------------------------------------------------
 
 ```{r, warning=FALSE, message=FALSE}
 
@@ -62,10 +74,14 @@ After reading the data the next step is to gather the longitude and latitude for
 #geocoded_data <- addys %>%
 #  ggmap::mutate_geocode(addy)
 #readr::write_csv(geocoded_data, "geocoded_data.csv")
-geocoded_data <- readr::read_csv(here::here("posts/select health/geocoded_data.csv"))
+load(here::here(file = 'posts/select health/geocoded_data.rda'))
 ```
 
+------------------------------------------------------------------------
+
 Then some additional data wrangling after obtaining all geocodes.
+
+------------------------------------------------------------------------
 
 ```{r, warning=FALSE, message=FALSE}
 # Join the coord with the providers data and wrangle furthur
@@ -73,12 +89,7 @@ df <- data %>%
   dplyr::left_join(geocoded_data) %>% 
   dplyr::filter(!grepl("^\\(", addy)) %>% 
   dplyr::distinct(facility_name, facility_type, type, addy, lon, lat, group_name, languages, gender, first_name, last_name, specialty, network_tier)
-```
 
-Ready for some mapping!
-
-```{r, warning=FALSE, message=FALSE}
-# Create individual datasets for each type for the map
 group_data <- df %>% 
   dplyr::filter(type == 'GROUP') %>% 
   janitor::remove_empty('cols') %>% 
@@ -99,9 +110,13 @@ facility_data <- df %>%
   dplyr::distinct(facility_name, facility_type, type, addy, lon, lat, notes)
 ```
 
+------------------------------------------------------------------------
+
 ### All types
 
-Now lets do some mapping with all types!
+Now lets do some mapping!
+
+------------------------------------------------------------------------
 
 ```{r}
 
@@ -119,75 +134,135 @@ leaflet() %>%
                    options = leaflet::layersControlOptions(collapsed = FALSE)) 
 ```
 
+------------------------------------------------------------------------
+
 This is a relatively simple example of how to gather and visualize public data.
 
 ------------------------------------------------------------------------
 
 ### Individual providers map exploration
 
-Adding a bit of shiny and restrictiveness to the map can quickly return specific providers. Let's add a table as well for additional context.
+Additionally, using [shiny](https://www.rstudio.com/products/shiny/) we can go further with individual providers, identifying specific providers locations by gender, language and specialty.
 
-```{r, echo=FALSE}
-# Inputs for individual providers:
-shiny::selectInput('gender_input',
-            label = 'Gender',
-            choices = c('Female', 'Male'),
-            selected = 'Female')
+------------------------------------------------------------------------
 
-language_subset <- shiny::reactive({
-  indiv_data %>% 
-  dplyr::filter(gender == input$gender_input)
-  })
+::: {.callout-note collapse="true"}
+## Shiny Code
 
- shiny::renderUI({
-    shinyWidgets::pickerInput('language_input', 'Languages', multiple = T, options = list(`actions-box` = TRUE),
-                       choices = (language_subset()$languages) %>% unique(), 
-                       selected = ((language_subset()$languages) %>% unique())[1]
-                )
-   })
- 
-specialty_subset <- shiny::reactive({
-  indiv_data %>% dplyr::filter(gender == input$gender_input & languages %in% input$language_input)
-  })
- 
- shiny::renderUI({
-    shinyWidgets::pickerInput('specialty_input', 'Specialty', multiple = T, options = list(`actions-box` = TRUE),
-                              choices = (specialty_subset()$specialty) %>% unique(), 
-                              selected = ((specialty_subset()$specialty) %>% unique())[1]
-                )
-   })
+``` r
+# load libraries ----
+library(shiny)
+library(shinyWidgets)
+library(dplyr)
+library(jsonlite)
+library(DT)
+library(leaflet)
 
-renderLeaflet({
-  data <- indiv_data %>% 
-    dplyr::filter(gender == input$gender_input & languages %in% input$language_input & specialty %in% input$specialty_input)
+# functions for map ----
+viz_map <- function(df, threshold = NULL) {
 
   leaflet::leaflet() %>%
-    leaflet::setView(lng = -111.349309, lat = 41.648323, zoom = 4) %>% 
-    leaflet::addTiles() %>% 
-    leaflet::addCircleMarkers(popup = data$notes, clusterOptions = leaflet::markerClusterOptions(), lng = data$lon, lat = data$lat, group = "Individual", color = "red")
+    leaflet::setView(lng = -111.349309, lat = 41.648323, zoom = 4) %>%
+    leaflet::addTiles() %>%
+    leaflet::addCircleMarkers(popup = df$notes,
+                              clusterOptions = leaflet::markerClusterOptions(),
+                              lng = df$lon,
+                              lat = df$lat,
+                              color = "red")
+}
+
+# load data ----
+load(file = 'provider.rda')
+load(file = 'geocoded_data.rda')
+
+# data prep ----
+data <- provider %>%
+  dplyr::filter(type == 'INDIVIDUAL') %>%
+  dplyr::mutate(addresses = purrr::map(addresses, as.data.frame),
+                name = paste0(name$first, ' ', name$last)
+                ) %>%
+  tidyr::unnest(addresses, keep_empty = T) %>%
+  tidyr::unnest(languages, keep_empty = T) %>%
+  tidyr::unnest(specialty, keep_empty = T) %>%
+  dplyr::mutate(addresses = stringr::str_replace_all(address, "&", ","),
+                addy = paste0(addresses, ", ", city, ", ", state),
+                notes = paste0(gender, " - ", name, " - ", languages, " - ", specialty)
+                ) %>%
+  dplyr::left_join(geocoded_data) %>%
+  dplyr::distinct(type, addy, lon, lat, languages, gender, name, specialty, notes)
+
+# shiny application ----
+ui <- fluidPage(
+
+  titlePanel("Select Health Individual providers map"),
+  # Inputs
+  column(2,
+         fluidRow(selectInput(inputId = "gender", label = "Gender", choices = c('Female', 'Male'), selected = 'Female')),
+         fluidRow(pickerInput(inputId = 'language', label = "Language", choices = NULL, selected = NULL, multiple = T, options = list(`actions-box` = TRUE))),
+         fluidRow(pickerInput(inputId = 'specialty', label = "Specialty", choices = NULL, selected = NULL, multiple = T, options = list(`actions-box` = TRUE)))
+         ),
+  # Plot/Table
+  mainPanel(
+    column(12, leafletOutput('map')),
+    column(12, DT::dataTableOutput('table'))
+    ))
+
+server <- function(input, output, session) {
+
+  current_language <- reactiveVal()
+  observe({current_language(input$language)})
+
+  current_specialty <- reactiveVal()
+  observe({current_specialty(input$specialty)})
+
+  observeEvent(input$gender,{
+    updatePickerInput(session, 'language', selected = current_language(), choices = unique(sort(data$languages[data$gender == input$gender])))
+    })
+
+  observeEvent(input$language,{
+    updatePickerInput(session, 'specialty', selected = current_specialty(), choices = unique(sort(data$specialty[data$gender == input$gender & data$languages %in% input$language])))
   })
 
-DT::renderDT({
-  data <- indiv_data %>% 
-    dplyr::filter(gender == input$gender_input & languages %in% input$language_input & specialty %in% input$specialty_input) %>% 
-    dplyr::distinct(name, addy, gender, languages, specialty)
-  
-  DT::datatable(
-    data,
-    rownames = FALSE,
-    extensions = 'Buttons',
-    class = 'display nowrap compact cell-border',
-    filter = 'top',
-    options = list(
-      scrollX = TRUE,
-      scrollY = "300px",
-      dom = 'tB',
-      buttons = c('copy', 'csv'),
-      paging = FALSE,
-      fixedHeader = TRUE))
-  })
-    
+  # Map
+  output$map <- renderLeaflet({
+    map <- data %>%
+      filter(gender == input$gender & languages %in% input$language & specialty %in% input$specialty)
+    viz_map(map)
+    })
+
+  # Table
+  output$table <- DT::renderDataTable({
+    DT::datatable(
+      data %>%
+        filter(gender == input$gender & languages %in% input$language & specialty %in% input$specialty) %>%
+        distinct(name, addy, specialty, languages),
+      colnames = c('Name', 'Address', 'Specialty', 'Language'),
+      rownames = FALSE,
+      extensions = 'Buttons',
+      class = 'display nowrap compact cell-border',
+      filter = 'top',
+      options = list(
+        scrollX = TRUE,
+        scrollY = "300px",
+        dom = 'tB',
+        buttons = c('copy', 'csv'),
+        paging = FALSE,
+        fixedHeader = TRUE)
+      )
+    })
+  }
+
+shinyApp(ui, server)
 ```
+:::
+
+------------------------------------------------------------------------
+
+```{=html}
+ <iframe id="example1" src="https://tyler-widdison.shinyapps.io/select_health_indiv_providers/" style="border: none; width: 100%; height: 650px" frameborder="0"></iframe>
+```
+
+------------------------------------------------------------------------
 
 ### Additional data
 
