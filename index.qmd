@@ -3,7 +3,7 @@ title: "Tyler Widdison"
 format: html
 about:
   image: headshot.jpeg
-  template: solana
+  template: yeti
 ---
 
 ------------------------------------------------------------------------
