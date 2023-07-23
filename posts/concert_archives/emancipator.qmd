@@ -34,16 +34,12 @@ format:
 
 ### [Data processing]{.underline}
 
-For this post, I focus on data from <https://www.concertarchives.org/bands/emancipator>. This site had the most complete concert history I could find.
-
-Regarding the data, there are some issues with when there is a festival type. The festivals will repeat multiple times. Festivals are an issue when putting this data into a tidy format.
+For this post, I focus on data from <https://www.concertarchives.org/bands/emancipator>. This site had the most complete concert history I could find. I web scrape using rvest, check and double check the data with dplyr, and eventually break down and use excel to do one final clean. There were a lot of individual dates repeated, festivals repeated, and overall not easy to deal with. However I do attempt a first clean of the data-set but came to realize I will need to manually intervene due to the nature of the issue.
 
 ```{r, warning=FALSE, message=FALSE}
 # Load required libraries
 library(rvest)
 library(purrr)
-library(ggmap)
-library(magrittr)
 library(stringr)
 library(tidyverse)
 
@@ -74,13 +70,7 @@ for (page_num in 1:29) {
 # Combine all the scraped data into a single data frame
 combined_data <- do.call(plyr::rbind.fill, all_data)
 
-combined_data %>% 
-  kableExtra::kable() %>% 
-    kableExtra::kable_paper(full_width = F) %>% 
-    kableExtra::scroll_box(height = "400px", width = '600px')
-```
-
-```{r, warning=FALSE, message=FALSE}
+# Try to clean the dataset
 dat <- combined_data %>% 
   mutate(Date = str_extract(combined_data$Date, "\\w+ \\d+, \\d+"),
          Date = as.Date(Date, format = "%b %d, %Y"),
@@ -94,16 +84,14 @@ dat <- combined_data %>%
 
 dat %>% 
   kableExtra::kable() %>% 
-  kableExtra::kable_paper(full_width = F) %>% 
-  kableExtra::scroll_box(height = "400px", width = '600px')
+    kableExtra::kable_paper(full_width = F) %>% 
+    kableExtra::scroll_box(height = "400px", width = '600px')
+```
 
+```{r, warning=FALSE, message=FALSE}
 # Load my dataset cleaned manually
 load(here::here(file = 'posts/concert_archives/emancipator_tours.rda'))
 ```
-
-------------------------------------------------------------------------
-
-This still returns some problematic rows. From here manual intervention is needed to remove the concerts that didn't exist. I'll load my clean data I worked on manually.
 
 ------------------------------------------------------------------------
 
@@ -111,7 +99,7 @@ This still returns some problematic rows. From here manual intervention is neede
 
 With the [ggmap](https://github.com/dkahle/ggmap) package, the `Location` variable can be used to obtain the geo coordinates. Which I want to use for map visuals.
 
-After gathering the geo data from the Location (City, State, Country) I add which album is most recent to each date. So we can look into touring after an album release.
+After gathering the geo data from the Location (City, State, Country, lon, lat) I then add which album was most recently released. So we can look into touring after an album release. After which I start asking questions regarding the travels of Emancipator in this data-set.
 
 ::: {.callout-note collapse="true"}
 ## Geo coord code
@@ -202,6 +190,8 @@ dat %>%
 
 ### [What was the busiest travel month?]{.underline}
 
+Looking at each month of the year, February seems to have been, historically, a favorite time for Emancipator to travel. October 2015 there were 24 shows (in 31 days)! That is a lot of traveling. The release of Seven Seas happened in late Sept 2015. I wonder if the ensemble played during this time Doug and Ilya... That is a lot of equipment moving every day.
+
 ```{r, warning=FALSE, message=FALSE}
 dat %>%
   group_by(Year, Month) %>%
@@ -215,13 +205,11 @@ dat %>%
   labs(x = '')
 ```
 
-Looking at each month of the year, February seems to have been, historically, a favorite time for Emancipator to travel. October 2015 there were 24 shows (in 31 days)! That is a lot of traveling. The release of Seven Seas happened in late Sept 2015. I wonder if the ensemble played during this time Doug and Ilya... That is a lot of equipment moving every day. You can explore the number of concerts played by date with the chart below.
-
 </div>
 
 ### [Exploration chart for concerts played]{.underline}
 
-You can visually see the amount of concerts played by Emancipator on this timeline. Right after Seven Seas came out they were on the road heavily in October.
+You can visually see the amount of concerts played by Emancipator on this timeline. Right after Seven Seas came out they were on the road heavily in October. (You can interact with the chart below!)
 
 ```{r, warning=FALSE, message=FALSE}
 library(dygraphs)
@@ -232,7 +220,7 @@ xts <- dat %>%
   as.xts()
 
 dygraph(xts) %>% 
-    dyRangeSelector(dateWindow = c("2014-1-1", "2017-12-31")) %>% 
+    dyRangeSelector(dateWindow = c("2014-1-1", "2015-12-31")) %>% 
     dyEvent("2022-9-23", '11th Orbit') %>% 
     dyEvent("2020-4-3", 'Mountain of Memory') %>% 
     dyEvent("2017-11-17", 'Baralku') %>% 
@@ -416,7 +404,7 @@ ggplot(data = states) +
     guides(fill = "none", color = 'none')
 ```
 
-Mountain of Memory was released right as lock-downs started. The entire tour, from what it seems, was canceled. From 2020 April - May and July west coast. Sept - Oct on the east coast. March 17th, the concerts were [supposed to happened as planned](https://emancipatormusic.com/2020/03/17/new-song-shows/), March 24th the concerts were [rescheduled](https://emancipatormusic.com/2020/03/24/emancipator-ensemble-spring-tour-postponed-july/), then at the end of April the rest of the tour was then [canceled](https://emancipatormusic.com/2020/04/30/cancelled-july-shows/). One show occurred in Oregon, July 2020.
+Mountain of Memory was released right as lock-downs started. The entire tour, from what it seems, was canceled. From 2020 April - 2020 May and 2020 July west coast was canceled. 2020 Sept - 2020 Oct on the east coast was canceled. On March 17th, the concerts were [supposed to happened as planned](https://emancipatormusic.com/2020/03/17/new-song-shows/), On March 24th the concerts were [rescheduled](https://emancipatormusic.com/2020/03/24/emancipator-ensemble-spring-tour-postponed-july/), then at the end of April the rest of the tour was then [canceled](https://emancipatormusic.com/2020/04/30/cancelled-july-shows/). One show occurred in Oregon, July 2020.
 
 ```{r, message=FALSE, warning=FALSE}
 dat %>% 
@@ -429,7 +417,7 @@ dat %>%
 
 ------------------------------------------------------------------------
 
-That is it for this post, some visuals on a musical artists travels! Enjoy this awesome Red Rocks Amphitheater video.
+That is it for this post, some visuals on a musical artists travels! Enjoy this awesome live Red Rocks Amphitheater ensemble!
 
 <center>
 
