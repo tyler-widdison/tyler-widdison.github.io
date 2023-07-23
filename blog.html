@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Tyler Widdison</title>
+<title>Tyler Widdison - Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,6 +30,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-listing/list.min.js"></script>
+<script src="site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -59,12 +61,43 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script>
 
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    const listingTargetEl = window.document.querySelector('#listing-listing .list');
+    if (!listingTargetEl) {
+      // No listing discovered, do not attach.
+      return; 
+    }
+
+    const options = {
+      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      
+      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
+    };
+
+    window['quarto-listings'] = window['quarto-listings'] || {};
+    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
+
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  });
+
+  window.addEventListener('hashchange',() => {
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  })
+  </script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -82,11 +115,11 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" rel="" target="" aria-current="page">
+    <a class="nav-link" href="./index.html" rel="" target="">
  <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./blog.html" rel="" target="">
+    <a class="nav-link active" href="./blog.html" rel="" target="" aria-current="page">
  <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item compact">
@@ -115,13 +148,15 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(3)</span></div><div class="category" data-category="Data gathering">Data gathering <span class="quarto-category-count">(3)</span></div><div class="category" data-category="Informational">Informational <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Maps">Maps <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Olympics">Olympics <span class="quarto-category-count">(1)</span></div></div></div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Tyler Widdison</h1>
+<h1 class="title">Blog</h1>
 </div>
 
 
@@ -136,39 +171,125 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<hr>
-<div class="columns">
-<div class="column" style="width:55%;">
-<section id="bio" class="level3">
-<h3 class="anchored" data-anchor-id="bio">Bio</h3>
-<p>Welcome to my professional portfolio! I’m Tyler Widdison, a dedicated data analyst driven by a passion for finding solutions to complex problems. My current focus lies in data analysis, visualization, and empowering data workflows. I currently work as a data analyst at FamilySearch, where I contribute to the Contract and Compliance team. I previously worked with USA Beach Volleyball teams during the Tokyo 2021 Olympics where I supported the gold medal winning team.</p>
-</section>
-</div><div class="column" style="width:5%;">
 
-</div><div class="column" style="width:40%;">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="headshot.jpeg" class="img-fluid figure-img" width="266"></p>
-</figure>
+
+
+
+<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
+<div class="list quarto-listing-default">
+<div class="quarto-post image-right" data-index="0" data-categories="Maps,Data gathering" data-listing-date-sort="1690005600000" data-listing-file-modified-sort="1690061111759" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12">
+<div class="thumbnail">
+<p><a href="./posts/concert_archives/emancipator.html"> <img src="./posts/concert_archives/mom.jpg" class="thumbnail-image"> </a></p>
+</div>
+<div class="body">
+<a href="./posts/concert_archives/emancipator.html">
+<h3 class="no-anchor listing-title">
+The journey of Emancipator
+</h3>
+<div class="listing-subtitle">
+
+</div>
+</a>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Maps'); return false;">
+Maps
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Data gathering'); return false;">
+Data gathering
+</div>
+</div>
+<a href="./posts/concert_archives/emancipator.html">
+<div class="listing-description">
+<!-- desc(5A0113B34292)[max=175]:posts/concert_archives/emancipator.html -->
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./posts/concert_archives/emancipator.html">
+<div class="listing-date">
+Jul 22, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-categories="Maps,Data gathering,Informational" data-listing-date-sort="1687413600000" data-listing-file-modified-sort="1690059200144" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8">
+<div class="thumbnail">
+<p><a href="./posts/select health/select_health.html"> <img src="./posts/select health/select_health_picture.png" class="thumbnail-image"> </a></p>
+</div>
+<div class="body">
+<a href="./posts/select health/select_health.html">
+<h3 class="no-anchor listing-title">
+Select Health providers
+</h3>
+<div class="listing-subtitle">
+
+</div>
+</a>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Maps'); return false;">
+Maps
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Data gathering'); return false;">
+Data gathering
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Informational'); return false;">
+Informational
+</div>
+</div>
+<a href="./posts/select health/select_health.html">
+<div class="listing-description">
+<p>Data gathering, wrangling, visualizing with health providers</p>
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./posts/select health/select_health.html">
+<div class="listing-date">
+Jun 22, 2023
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="2" data-categories="Olympics,Data gathering" data-listing-date-sort="1684908000000" data-listing-file-modified-sort="1685636891152" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
+<div class="thumbnail">
+<p><a href="./posts/olympics_data_verse.html"> <img src="./posts/rings.png" class="thumbnail-image"> </a></p>
+</div>
+<div class="body">
+<a href="./posts/olympics_data_verse.html">
+<h3 class="no-anchor listing-title">
+OlympicsDataverse
+</h3>
+<div class="listing-subtitle">
+
+</div>
+</a>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Olympics'); return false;">
+Olympics
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Data gathering'); return false;">
+Data gathering
+</div>
+</div>
+<a href="./posts/olympics_data_verse.html">
+<div class="listing-description">
+<p>A place for all things data via Olympic Sports</p>
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./posts/olympics_data_verse.html">
+<div class="listing-date">
+May 24, 2023
+</div>
+</a>
 </div>
 </div>
 </div>
-<hr>
-<section id="experience" class="level2">
-<h2 class="anchored" data-anchor-id="experience">Experience</h2>
-<p><strong>Data Analyst</strong> (2022-present)<br>
-FamilySearch<br>
-<br>
-<strong>Performance Data Analyst</strong> (2019-2023)<br>
-USA Beach Volleyball Teams<br>
-<br>
-<strong>Operations Data Analyst</strong> (2013-2019)<br>
-Hudl/Volleymetrics</p>
-</section>
-
-
-
-</main> <!-- /main -->
+<div class="listing-no-matching d-none">
+No matching items
+</div>
+</div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

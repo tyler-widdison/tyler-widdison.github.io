@@ -1,0 +1,413 @@
+---
+title: "The journey of Emancipator"
+date: '2023-07-22'
+categories: ['Maps', 'Data gathering']
+image: "mom.jpg"
+execute: 
+  message: false
+  warning: false
+editor_options:
+  chunk_output_type: console
+format: 
+  html:
+    #page-layout: full
+    code-fold: true
+    code-summary: "Show the code"
+---
+
+
+<center>
+
+### [Emancipators [discography](#0) and travels]{.underline}
+
+</center>
+
+<center>
+
+
+```{=html}
+ <iframe id="example1" src="https://bandcamp.com/EmbeddedPlayer/track=1170432438/size=small/bgcol=ffffff/linkcol=0687f5/transparent=true/" style="border: none; width: 100%; height: 50px" frameborder="0"></iframe>
+```
+
+</center>
+
+[Emancipator](https://emancipatormusic.com/) - Doug Appling along side Ilya Goldberg, described as a uplifting, mid-tempo, beat-centric, densely layered, melodica, electronica, a blend of music inspiring and creating a story with their captivating melodies and tunes. Doug also found record label [Loci Records](https://locirecords.com/pages/about). This blog post explores the concerts of Emancipator, delving into some data to gain insights into their musical journey.
+
+------------------------------------------------------------------------
+
+<center>
+
+![2015, Dec 31 Park City, UT Doug, Krista, Tyler. Always enjoy when Doug & Ilya make time for Utah!](DougTyler.jpg){fig-align="center" width="446"}
+
+</center>
+
+### [Data processing]{.underline}
+
+For this post, I focus on data from <https://www.concertarchives.org/bands/emancipator>. This site had the most complete concert history I could find.
+
+
+```{r, warning=FALSE, message=FALSE}
+# Load required libraries
+library(rvest)
+library(purrr)
+library(ggmap)
+library(magrittr)
+library(stringr)
+library(tidyverse)
+
+# Specify the base URL
+base_url <- "https://www.concertarchives.org/bands/emancipator?page="
+
+# Create an empty list to store the scraped data
+all_data <- list()
+
+# Loop through the pages
+for (page_num in 1:29) {
+  # Construct the URL for each page
+  url <- paste0(base_url, page_num, "#concert-table")
+
+  # Read the HTML content of the page
+  page <- read_html(url)
+
+  # Scrape the table with the specified ID
+  table <- html_table(html_nodes(page, "#band-show-table-condensed"), header = TRUE)
+
+  # Access the scraped data
+  data <- table[[1]][, 1:4]
+
+  # Append the data to the list
+  all_data[[page_num]] <- data
+}
+
+# Combine all the scraped data into a single data frame
+combined_data <- do.call(plyr::rbind.fill, all_data)
+```
+
+
+------------------------------------------------------------------------
+
+Regarding the data, there are some issues with when there is a festival type. The festivals will repeat multiple times.
+
+
+```{r, warning=FALSE, message=FALSE}
+combined_data %>% 
+  filter(grepl('Festival', Concert)) %>% 
+  kableExtra::kable() %>% 
+    kableExtra::kable_paper(full_width = F) %>% 
+    kableExtra::scroll_box(height = "300px", width = '600px')
+```
+
+
+------------------------------------------------------------------------
+
+Festivals are an issue to deal with. Using R, there is some data cleaning which can take place.
+
+
+```{r}
+dat <- combined_data %>% 
+  mutate(Date = str_extract(combined_data$Date, "\\w+ \\d+, \\d+"),
+         Date = as.Date(Date, format = "%b %d, %Y"),
+         Location = ifelse(grepl('\\/', Location), 
+                           stringr::str_extract(combined_data$Location, "\\b[A#-Z][a-zA-Z]+(?: [A-Z][a-zA-Z]+)*, [A-Z][a-zA-Z]+(?: [A-Z][a-zA-Z]+)*, [A-Z][a-zA-Z]#+(?: [A-Z][a-zA-Z]+)*$"),
+                           Location)) %>% 
+  filter(!grepl('Duplicate', Location)) %>% 
+  select(-Concert) %>% 
+  filter(!is.na(Location) & Venue != '') %>% 
+  distinct(Date, Venue, Location)
+
+dat %>% 
+  kableExtra::kable() %>% 
+  kableExtra::kable_paper(full_width = F) %>% 
+  kableExtra::scroll_box(height = "300px", width = '600px')
+```
+
+
+------------------------------------------------------------------------
+
+This still returns some problematic rows. From here manual intervention is needed to remove the concerts that didn't exist. I'll load my clean data I worked on manually. And add the album to the corresponding date range.
+
+
+```{r, warning=FALSE, message=FALSE}
+load(here::here(file = 'posts/concert_archives/emancipator_tours.rda'))
+```
+
+
+Now that the data is almost where I want it, I want to get geo coordinates by location for mapping use.
+
+------------------------------------------------------------------------
+
+### [Geo coordinates]{.underline}
+
+With the [ggmap](https://github.com/dkahle/ggmap) package, the `Location` variable can be used to obtain the geo coordinates.
+
+::: {.callout-note collapse="true"}
+## Geo coord code
+
+``` r
+# Get geocoordinates
+library(ggmap)
+addys <- df %>% 
+ dplyr::distinct(Location)
+
+# Obtain coordinates using ggmap
+geocoded_data <- addys %>%
+  ggmap::mutate_geocode(Location)
+```
+:::
+
+After gathering the geo data I add which album is most recent to each date. So we can look into touring after an album release.
+
+
+```{r, warning=FALSE, message=FALSE}
+load(here::here(file = 'posts/concert_archives/geocoded_data.rda'))
+
+# finish joining Add tour data and add concert number and date info
+dat <- df %>% 
+  mutate(recent_release = case_when(
+    Date >= as.numeric(as.Date("2006-01-19")) & Date < as.Date("2010-01-18") ~ 'Soon It Will Be Cold Enough', 
+    Date >= as.numeric(as.Date("2010-01-19")) & Date < as.Date("2013-01-28") ~ 'Safe in the Steep Cliffs', 
+    Date >= as.numeric(as.Date("2013-01-29")) & Date < as.Date("2015-09-24") ~ 'Dusk to Dawn', 
+    Date >= as.numeric(as.Date("2015-09-25")) & Date < as.Date("2017-11-16") ~ 'Seven Seas', 
+    Date >= as.numeric(as.Date("2017-11-17")) & Date < as.Date("2020-04-02") ~ 'Baralku', 
+    Date >= as.numeric(as.Date("2020-04-03")) & Date < as.Date("2022-09-22") ~ 'Mountin of Memory', 
+    Date >= as.numeric(as.Date("2022-09-23")) & Date < as.Date("2024-01-01") ~ '11th Orbit',
+    TRUE ~ "11th Orbit")) %>% 
+  mutate(recent_release = factor(recent_release, 
+                               levels = c('Soon It Will Be Cold Enough', 
+                                          'Safe in the Steep Cliffs', 
+                                          'Dusk to Dawn', 
+                                          'Seven Seas', 
+                                          'Baralku', 
+                                          'Mountin of Memory', 
+                                          '11th Orbit'))
+         ) %>% 
+  left_join(geocoded_data) %>% 
+  distinct(Date, Concert, Venue, Location, lon, lat, recent_release) %>% 
+  mutate(Year = substr(Date, 1, 4),
+         Month = substr(Date, 6, 7),
+         yr_mo = paste0(Year, Month),
+         Date = as_date(Date),
+         no = row_number())
+```
+
+
+------------------------------------------------------------------------
+
+## [Which state has Emancipator played the most?]{.underline}
+
+
+```{r, warning=FALSE, message=FALSE}
+dat %>% 
+  separate(Location, c('City', 'State', 'Country'), ", ") %>% 
+  group_by(State) %>% 
+  count() %>% 
+  ungroup() %>% 
+  arrange(-n) %>% 
+  na.omit() %>% 
+  filter(n != 1) %>% 
+  ggplot(aes(reorder(State, n), n, label = n)) + 
+  geom_col(fill = '#2c7bb6', width = 0.2) + 
+  coord_flip() + 
+  geom_point(color = '#2c7bb6', size = 5) +
+  silgelib::theme_roboto() + 
+  labs(x = '',
+       y = 'Number of concerts played') + 
+  geom_text(y = -2, size = 3.2)
+```
+
+
+### [What is the number of concerts performed after the release of an album? And before the release of the next album.]{.underline}
+
+A ton of shows played before the release of Seven Seas. Right before and after starting Loci records.
+
+
+```{r, warning=FALSE, message=FALSE}
+dat %>%
+  group_by(recent_release) %>% 
+  count() %>% 
+  rename(`Concert count` = n,
+         Album = recent_release) %>% 
+  kableExtra::kable() %>% 
+  kableExtra::kable_paper(full_width = F) %>% 
+  kableExtra::scroll_box(height = "300px", width = '600px')
+```
+
+
+### [What was the busiest travel month?]{.underline}
+
+Insane! October 2015 there were 24 shows (in 31 days)! That is a lot of traveling. The release of Seven Seas happened in late Sept 2015. I wonder if the ensemble played during this time Doug and Ilya... That is a lot of equipment moving every day. You can explore the number of concerts played by date with the chart below.
+
+
+```{r, warning=FALSE, message=FALSE}
+dat %>%
+  group_by(Year, Month) %>% 
+  count() %>% 
+  ungroup() %>% 
+  rename(`Concert count` = n) %>% 
+  kableExtra::kable() %>% 
+  kableExtra::kable_paper(full_width = F) %>% 
+  kableExtra::scroll_box(height = "300px", width = '600px')
+```
+
+
+### [Exploration chart for concerts played]{.underline}
+
+You can visually see the amount of concerts played by Emancipator on this timeline. Right after Seven Seas came out they were on the road heavily in October.
+
+
+```{r, warning=FALSE, message=FALSE}
+library(dygraphs)
+library(xts)
+
+xts <- dat %>% 
+  select(Date, no, Location) %>% 
+  as.xts()
+
+dygraph(xts) %>% 
+    dyRangeSelector(dateWindow = c("2014-1-1", "2017-12-31")) %>% 
+    dyEvent("2022-9-23", '11th Orbit') %>% 
+    dyEvent("2020-4-3", 'Mountain of Memory') %>% 
+    dyEvent("2017-11-17", 'Baralku') %>% 
+    dyEvent("2015-9-25", 'Seven Seas') %>% 
+    dyEvent("2013-1-29", 'Dusk to Dawn') %>% 
+    dyEvent("2010-1-19", 'Safe in the Steep Cliffs') %>% 
+    dyEvent('2006-1-19', 'Soon It Will Be Cold Enough')
+```
+
+
+------------------------------------------------------------------------
+
+## [What was the travel schedule for Emancipator in 2015 October?]{.underline}
+
+
+```{r, warning=FALSE, message=FALSE}
+#| out-width: 80%
+library(maps)
+library(sf)
+library("rnaturalearth")
+library("rnaturalearthdata")
+
+world <- ne_countries(scale = "medium", returnclass = "sf")
+states <- st_as_sf(map("state", plot = FALSE, fill = TRUE))
+
+dd <- dat %>% filter(yr_mo == '201510') %>% mutate(Day = lubridate::day(Date))
+
+ggplot(states) + 
+  geom_sf(fill = NA, color = 'darkgrey') + 
+  geom_point(data = dd, aes(x = lon, y = lat, group = seq_along(Day)), color = 'black') + 
+  coord_sf(xlim = c(-97, -67), ylim = c(47, 30), expand = FALSE) + 
+  geom_path(data = dd, aes(x = lon, y = lat), color = 'red') + ggrepel::geom_text_repel(data = dd, aes(lon, lat, label = paste0('10-', Day))) + 
+  theme_bw() + 
+  labs(x = '', y = '', title = 'Emancipators travel October 2015')
+
+
+library(gganimate)
+tr <- ggplot(states) + 
+  geom_sf(fill = NA, color = 'darkgrey') + 
+  geom_point(data = dd, aes(x = lon, y = lat, group = seq_along(Day)), color = 'black') + 
+  coord_sf(xlim = c(-97, -67), ylim = c(47, 30), expand = FALSE) + 
+  geom_path(data = dd, aes(x = lon, y = lat), color = 'red') + 
+  theme_bw() + 
+  transition_reveal(along = Day) + 
+  ggtitle("Date: 2015-10-{frame_along}") + 
+  labs(x = '', y = '')
+
+animate(tr, nframes = 300)
+```
+
+
+### [How was the world travel in this data-set?]{.underline}
+
+Some shows in Europe and Australia. But I want to see the majority of the concerts so I will focus on the United States.
+
+
+```{r, warning=FALSE, message=FALSE}
+ggplot(data = world) + 
+    theme_bw() + 
+    geom_point(data = dat, aes(x = lon, y = lat), color = "#007d3c", size = 1.5, alpha = .8) + 
+    geom_sf(data = world, fill = NA, color = 'darkgrey') + 
+    coord_sf(xlim = c(-130, 180), ylim = c(80, -50), expand = FALSE) + 
+    theme(axis.title.x = element_blank(),
+          axis.text.x = element_blank(),
+          axis.ticks.x = element_blank(),
+          axis.title.y = element_blank(),
+          axis.text.y = element_blank(),
+          axis.ticks.y = element_blank(),
+    ) 
+```
+
+
+### [Where in the United States did Emancipator travel most?]{.underline}
+
+
+```{r, warning=FALSE, message=FALSE}
+ggplot(data = states) + 
+    theme_bw() + 
+    geom_density_2d(data = dat, aes(x = lon, y = lat), alpha = .5) +
+    geom_point(data = dat, aes(x = lon, y = lat), size = 1.5, alpha = .4) + 
+    geom_sf(data = states, fill = NA) + 
+    coord_sf(xlim = c(-125, -67), ylim = c(50, 25), expand = FALSE) + 
+    theme(axis.title.x = element_blank(),
+          axis.text.x = element_blank(),
+          axis.ticks.x = element_blank(),
+          axis.title.y = element_blank(),
+          axis.text.y = element_blank(),
+          axis.ticks.y = element_blank(),
+    ) +
+    guides(fill = "none") + 
+    labs(title = 'Emancipators travels 2009-2023')
+
+```
+
+
+### [How about after album releases?]{.underline}
+
+
+```{r, warning=FALSE, message=FALSE}
+ggplot(data = states) + 
+    theme_bw() + 
+    geom_density_2d(data = dat, aes(x = lon, y = lat), alpha = .5) +
+    geom_point(data = dat, aes(x = lon, y = lat, color = recent_release), size = 1.5) + 
+    geom_sf(data = states, fill = NA) + 
+    coord_sf(xlim = c(-125, -67), ylim = c(50, 25), expand = FALSE) + 
+    theme(axis.title.x = element_blank(),
+          axis.text.x = element_blank(),
+          axis.ticks.x = element_blank(),
+          axis.title.y = element_blank(),
+          axis.text.y = element_blank(),
+          axis.ticks.y = element_blank(),
+          ) +
+    labs(title = 'Concerts by album releases') + 
+    facet_wrap(~recent_release)   + 
+    guides(fill = "none", color = 'none')
+```
+
+
+### 
+
+Mountain of Memory was released right as lock-downs started. The entire tour, from what it seems, was canceled. From 2020 April - May and July west coast. Sept - Oct on the east coast. March 17th, the concerts were [supposed to happened as planned](https://emancipatormusic.com/2020/03/17/new-song-shows/), March 24th the concerts were [rescheduled](https://emancipatormusic.com/2020/03/24/emancipator-ensemble-spring-tour-postponed-july/), then at the end of April the rest of the tour was then [canceled](https://emancipatormusic.com/2020/04/30/cancelled-july-shows/). One show occurred in Oregon, July 2020.
+
+
+```{r, message=FALSE, warning=FALSE}
+dat %>% 
+  group_by(Year) %>% 
+  count(name = 'Concert count') %>% 
+  kableExtra::kable() %>% 
+  kableExtra::kable_paper(full_width = F) %>% 
+  kableExtra::scroll_box(height = "300px", width = '600px')
+```
+
+
+------------------------------------------------------------------------
+
+That is it for this post, some visuals on a musical artists travels! Enjoy this awesome Red Rocks Amphitheater video.
+
+<center>
+
+
+```{=html}
+ <iframe id="example1" src="https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2FRedRocksCO%2Fvideos%2F10155575043876662%2F&show_text=false&width=560&t=0" width="560" height="314" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowFullScreen="true"></iframe>
+```
+
+</center>
+

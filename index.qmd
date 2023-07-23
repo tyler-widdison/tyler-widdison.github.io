@@ -1,16 +1,23 @@
 ---
 title: "Tyler Widdison"
-format: html
-about:
-  image: headshot.jpeg
-  template: yeti
 ---
 
 ------------------------------------------------------------------------
 
+::: columns
+::: {.column width="55%"}
 ### Bio
 
 Welcome to my professional portfolio! I'm Tyler Widdison, a dedicated data analyst driven by a passion for finding solutions to complex problems. My current focus lies in data analysis, visualization, and empowering data workflows. I currently work as a data analyst at FamilySearch, where I contribute to the Contract and Compliance team. I previously worked with USA Beach Volleyball teams during the Tokyo 2021 Olympics where I supported the gold medal winning team.
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="40%"}
+![](headshot.jpeg){fig-align="center" width="266"}
+:::
+:::
 
 ------------------------------------------------------------------------
 
@@ -28,7 +35,3 @@ Welcome to my professional portfolio! I'm Tyler Widdison, a dedicated data analy
 | Hudl/Volleymetrics
 
 </div>
-
-------------------------------------------------------------------------
-
-## 
